@@ -94,6 +94,12 @@ export default function Home() {
             >
               Зарегистрироваться
             </Link>
+            <Link
+              href="/dashboard"
+              className="coral-button text-center text-lg font-medium px-8 py-4 shadow-lg transform transition-transform hover:scale-105"
+            >
+              Войти без регистрации
+            </Link>
           </div>
         </div>
       </div>
