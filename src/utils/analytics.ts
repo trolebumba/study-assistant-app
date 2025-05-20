@@ -199,3 +199,15 @@ export function trackPerformanceIssue(
     ...additionalData,
   });
 }
+
+// Экспортируем объект analytics для использования в компонентах
+export const analytics = {
+  trackEvent,
+  trackPageView,
+  trackTestResult,
+  trackFeedback,
+  trackBetaSignup,
+  trackIntegration,
+  trackError,
+  trackPerformanceIssue
+};
