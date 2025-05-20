@@ -1,21 +1,19 @@
 'use client';
 
-import MainNavigation from '@/components/MainNavigation';
+import React, { useState, useEffect } from 'react';
+import MainNavigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import AchievementList from '@/components/gamification/AchievementList';
-import UserLevel from '@/components/gamification/UserLevel';
+import Achievements from '@/components/Achievements';
+import LevelProgress from '@/components/LevelProgress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-// Моковые данные для уровня пользователя
-const userLevelData = {
-  level: 5,
-  experience: 350,
-  experienceToNextLevel: 500,
-  rank: 'Студент',
-  streak: 7,
-  totalPoints: 1250,
-};
+import {
+  GamificationProfile,
+  Achievement,
+  createGamificationProfile,
+  getAllAchievements,
+  checkAchievements
+} from '@/utils/gamification';
 
 // Моковые данные для рейтинга
 const leaderboardData = [
@@ -32,10 +30,63 @@ const leaderboardData = [
 ];
 
 export default function AchievementsPage() {
+  // Создаем моковый профиль геймификации
+  const [profile, setProfile] = useState<GamificationProfile | null>(null);
+
+  // Инициализируем профиль при загрузке страницы
+  useEffect(() => {
+    // Создаем базовый профиль
+    let mockProfile = createGamificationProfile('user123');
+
+    // Добавляем некоторые достижения для демонстрации
+    const allAchievements = getAllAchievements();
+    const unlockedAchievements: Achievement[] = [
+      { ...allAchievements.find(a => a.id === 'complete_first_test')!, unlockedAt: Date.now() - 1000 * 60 * 60 * 24 * 7 },
+      { ...allAchievements.find(a => a.id === 'streak_3_days')!, unlockedAt: Date.now() - 1000 * 60 * 60 * 24 * 5 },
+      { ...allAchievements.find(a => a.id === 'mastery_50')!, unlockedAt: Date.now() - 1000 * 60 * 60 * 24 * 3 },
+      { ...allAchievements.find(a => a.id === 'explore_3_topics')!, unlockedAt: Date.now() - 1000 * 60 * 60 * 24 * 1 },
+    ].filter(Boolean) as Achievement[];
+
+    // Обновляем профиль
+    mockProfile.achievements.unlocked = unlockedAchievements;
+    mockProfile.points = unlockedAchievements.reduce((sum, achievement) => sum + achievement.points, 0);
+
+    // Обновляем статистику
+    mockProfile.stats = {
+      testsCompleted: 5,
+      questionsAnswered: 87,
+      correctAnswers: 65,
+      topicsExplored: ['calculus', 'algebra', 'set_theory'],
+      totalStudyTime: 480, // 8 часов
+    };
+
+    // Обновляем серии
+    mockProfile.streaks = {
+      current: 3,
+      longest: 5,
+      lastActivity: Date.now(),
+    };
+
+    // Обновляем уровень
+    const { profile: updatedProfile } = checkAchievements(mockProfile, 'test_completed', { accuracy: 0.85 });
+    setProfile(updatedProfile);
+  }, []);
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-beach-leaf border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <MainNavigation />
-      
+
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,42 +96,80 @@ export default function AchievementsPage() {
             </p>
           </div>
         </header>
-        
+
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div className="lg:col-span-2">
-                  <UserLevel {...userLevelData} />
-                </div>
-                <div>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Ваши награды</CardTitle>
-                      <CardDescription>Разблокированные значки и награды</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-2xl" title="Первые шаги">🚀</div>
-                        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-2xl" title="Исследователь">🔍</div>
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl opacity-40" title="Заблокировано">🏆</div>
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl opacity-40" title="Заблокировано">📅</div>
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl opacity-40" title="Заблокировано">🦉</div>
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl opacity-40" title="Заблокировано">🦋</div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-              
               <Tabs defaultValue="achievements" className="mb-8">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="achievements">Достижения</TabsTrigger>
                   <TabsTrigger value="leaderboard">Рейтинг</TabsTrigger>
                 </TabsList>
+
                 <TabsContent value="achievements" className="mt-6">
-                  <AchievementList />
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Прогресс уровня */}
+                    <div className="lg:col-span-1">
+                      <LevelProgress profile={profile} />
+
+                      {/* Статистика */}
+                      <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Статистика</h2>
+                        </div>
+
+                        <div className="p-6">
+                          <div className="space-y-4">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Завершено тестов</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{profile.stats.testsCompleted}</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Отвечено на вопросов</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{profile.stats.questionsAnswered}</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Правильных ответов</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {profile.stats.correctAnswers} ({Math.round((profile.stats.correctAnswers / profile.stats.questionsAnswered) * 100)}%)
+                              </span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Изучено тем</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{profile.stats.topicsExplored.length}</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Общее время обучения</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {Math.floor(profile.stats.totalStudyTime / 60)} ч {profile.stats.totalStudyTime % 60} мин
+                              </span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Текущая серия</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{profile.streaks.current} дней</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Самая длинная серия</span>
+                              <span className="font-medium text-gray-900 dark:text-white">{profile.streaks.longest} дней</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Достижения */}
+                    <div className="lg:col-span-2">
+                      <Achievements unlockedAchievements={profile.achievements.unlocked} />
+                    </div>
+                  </div>
                 </TabsContent>
+
                 <TabsContent value="leaderboard" className="mt-6">
                   <Card>
                     <CardHeader>
@@ -101,15 +190,15 @@ export default function AchievementsPage() {
                           </thead>
                           <tbody>
                             {leaderboardData.map((user, index) => (
-                              <tr 
-                                key={user.id} 
-                                className={`border-b ${user.isCurrentUser ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                              <tr
+                                key={user.id}
+                                className={`border-b ${user.isCurrentUser ? 'bg-beach-leaf/10 dark:bg-beach-water/10' : ''}`}
                               >
                                 <td className="py-3 font-medium">{index + 1}</td>
                                 <td className="py-3">
                                   <div className="flex items-center">
                                     {user.isCurrentUser && (
-                                      <span className="mr-2 text-blue-500">👤</span>
+                                      <span className="mr-2 text-beach-leaf dark:text-beach-water">👤</span>
                                     )}
                                     {user.name}
                                   </div>
@@ -130,7 +219,7 @@ export default function AchievementsPage() {
           </div>
         </main>
       </div>
-      
+
       <Footer />
     </div>
   );
