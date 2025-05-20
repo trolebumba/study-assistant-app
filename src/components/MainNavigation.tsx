@@ -22,6 +22,9 @@ export default function MainNavigation({}: MainNavigationProps) {
     return pathname === path;
   };
 
+  // Проверяем, находимся ли мы на главной странице
+  const isHomePage = pathname === '/';
+
   // Функция для входа без регистрации
   const handleGuestLogin = () => {
     setIsGuestUser(true);
@@ -133,7 +136,7 @@ export default function MainNavigation({}: MainNavigationProps) {
           <div className="flex items-center">
             {/* Профиль пользователя */}
             <div className="hidden sm:ml-6 sm:flex sm:items-center gap-4">
-              {!isGuestUser && (
+              {!isGuestUser && isHomePage && (
                 <button
                   onClick={handleGuestLogin}
                   className="px-4 py-2 rounded-md bg-gradient-to-r from-teal-500 to-blue-500 text-white text-sm font-medium hover:from-teal-600 hover:to-blue-600 transition-colors"
@@ -162,7 +165,7 @@ export default function MainNavigation({}: MainNavigationProps) {
                   className={`absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 ${isProfileMenuOpen ? 'block' : 'hidden'}`}
                   role="menu"
                 >
-                  {!isGuestUser && (
+                  {!isGuestUser && isHomePage && (
                     <button
                       className="block w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
                       onClick={handleGuestLogin}
@@ -333,7 +336,7 @@ export default function MainNavigation({}: MainNavigationProps) {
               </div>
             </div>
             <div className="mt-3 space-y-1">
-              {!isGuestUser && (
+              {!isGuestUser && isHomePage && (
                 <button
                   className="block w-full text-left px-4 py-2 text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => {

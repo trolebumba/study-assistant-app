@@ -1,14 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
  * Компонент для пропуска навигации и перехода к основному содержимому
  * Важный компонент для доступности, позволяющий пользователям клавиатуры
  * быстро переходить к основному содержимому страницы
+ *
+ * Отображается только на страницах, отличных от главной
  */
 export function SkipToContent() {
   const [isFocused, setIsFocused] = useState(false);
+  const pathname = usePathname();
+
+  // Не отображаем на главной странице
+  if (pathname === '/') {
+    return null;
+  }
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
