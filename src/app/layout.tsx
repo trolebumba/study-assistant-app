@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryProvider } from "@/components/providers/QueryProvider";
-import { SkipToContent } from "@/components/a11y/SkipToContent";
 
 export const metadata: Metadata = {
   title: "Виртуальный ассистент для подготовки к экзаменам",
@@ -32,7 +31,6 @@ export default function RootLayout({
         <link rel="canonical" href="https://study-assistant-app.vercel.app" />
       </head>
       <body className="antialiased">
-        <SkipToContent />
         <QueryProvider>
           <main id="main-content">
             {children}
