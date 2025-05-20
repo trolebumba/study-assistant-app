@@ -13,12 +13,23 @@ interface MainNavigationProps {
 export default function MainNavigation({}: MainNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isGuestUser, setIsGuestUser] = useState(false);
   const pathname = usePathname();
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   // Функция для определения активного пункта меню
   const isActive = (path: string) => {
     return pathname === path;
+  };
+
+  // Функция для входа без регистрации
+  const handleGuestLogin = () => {
+    setIsGuestUser(true);
+    // Можно добавить дополнительную логику, например, создание временного профиля
+    console.log('Вход без регистрации');
+
+    // Закрываем меню профиля, если оно открыто
+    setIsProfileMenuOpen(false);
   };
 
   // Закрытие меню профиля при клике вне его
@@ -122,6 +133,14 @@ export default function MainNavigation({}: MainNavigationProps) {
           <div className="flex items-center">
             {/* Профиль пользователя */}
             <div className="hidden sm:ml-6 sm:flex sm:items-center gap-4">
+              {!isGuestUser && (
+                <button
+                  onClick={handleGuestLogin}
+                  className="px-4 py-2 rounded-md bg-gradient-to-r from-teal-500 to-blue-500 text-white text-sm font-medium hover:from-teal-600 hover:to-blue-600 transition-colors"
+                >
+                  Войти без регистрации
+                </button>
+              )}
               <FeedbackButton />
               <AccessibilityMenu />
 
@@ -136,13 +155,21 @@ export default function MainNavigation({}: MainNavigationProps) {
                   <svg className="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span className="text-sm">Пользователь</span>
+                  <span className="text-sm">{isGuestUser ? 'Гость' : 'Пользователь'}</span>
                 </button>
                 <div
                   id="profile-menu"
                   className={`absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 ${isProfileMenuOpen ? 'block' : 'hidden'}`}
                   role="menu"
                 >
+                  {!isGuestUser && (
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+                      onClick={handleGuestLogin}
+                    >
+                      Войти без регистрации
+                    </button>
+                  )}
                   <Link
                     href="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -155,16 +182,29 @@ export default function MainNavigation({}: MainNavigationProps) {
                   >
                     Настройки
                   </Link>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    onClick={() => {
-                      setIsProfileMenuOpen(false);
-                      // Здесь будет логика выхода из системы
-                      console.log('Выход из системы');
-                    }}
-                  >
-                    Выйти
-                  </button>
+                  {isGuestUser ? (
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        setIsGuestUser(false);
+                        console.log('Выход из гостевого режима');
+                      }}
+                    >
+                      Выйти из гостевого режима
+                    </button>
+                  ) : (
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        // Здесь будет логика выхода из системы
+                        console.log('Выход из системы');
+                      }}
+                    >
+                      Выйти
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -284,11 +324,26 @@ export default function MainNavigation({}: MainNavigationProps) {
                 </div>
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-gray-800 dark:text-white">Пользователь</div>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">user@example.com</div>
+                <div className="text-base font-medium text-gray-800 dark:text-white">
+                  {isGuestUser ? 'Гость' : 'Пользователь'}
+                </div>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {isGuestUser ? 'Временный доступ' : 'user@example.com'}
+                </div>
               </div>
             </div>
             <div className="mt-3 space-y-1">
+              {!isGuestUser && (
+                <button
+                  className="block w-full text-left px-4 py-2 text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => {
+                    handleGuestLogin();
+                    setIsOpen(false);
+                  }}
+                >
+                  Войти без регистрации
+                </button>
+              )}
               <Link
                 href="/profile"
                 className="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -303,15 +358,29 @@ export default function MainNavigation({}: MainNavigationProps) {
               >
                 Настройки
               </Link>
-              <button
-                className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={() => {
-                  setIsOpen(false);
-                  // Здесь будет логика выхода из системы
-                }}
-              >
-                Выйти
-              </button>
+              {isGuestUser ? (
+                <button
+                  className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsGuestUser(false);
+                    console.log('Выход из гостевого режима');
+                  }}
+                >
+                  Выйти из гостевого режима
+                </button>
+              ) : (
+                <button
+                  className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => {
+                    setIsOpen(false);
+                    // Здесь будет логика выхода из системы
+                    console.log('Выход из системы');
+                  }}
+                >
+                  Выйти
+                </button>
+              )}
             </div>
           </div>
         </div>
