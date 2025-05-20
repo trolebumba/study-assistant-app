@@ -38,6 +38,11 @@ export default function AssistantPage() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   };
 
+  // Состояние для хранения истории сообщений для API
+  const [apiMessages, setApiMessages] = useState<{ role: 'system' | 'user' | 'assistant'; content: string }[]>([
+    { role: 'system', content: 'Ты - ИИ-ассистент для подготовки к экзаменам, специализирующийся на помощи студентам в обучении.' },
+  ]);
+
   // Обработка отправки сообщения
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,14 +57,21 @@ export default function AssistantPage() {
       timestamp: new Date(),
     };
 
+    // Добавляем сообщение пользователя в историю для API
+    const userApiMessage = { role: 'user' as const, content: inputValue };
+    const updatedApiMessages = [...apiMessages, userApiMessage];
+
     setMessages((prev) => [...prev, userMessage]);
+    setApiMessages(updatedApiMessages);
     setInputValue('');
     setIsLoading(true);
 
-    // Имитация ответа от ассистента (в реальном приложении здесь будет запрос к API)
-    setTimeout(() => {
-      const assistantResponse = getAssistantResponse(inputValue);
+    try {
+      // Получаем ответ от OpenAI (в реальном приложении)
+      const { callOpenAI } = await import('@/utils/openai');
+      const assistantResponse = await callOpenAI(updatedApiMessages);
 
+      // Добавляем ответ ассистента в историю сообщений
       const assistantMessage: Message = {
         id: generateId(),
         type: 'assistant',
@@ -67,27 +79,25 @@ export default function AssistantPage() {
         timestamp: new Date(),
       };
 
+      // Добавляем ответ ассистента в историю для API
+      const assistantApiMessage = { role: 'assistant' as const, content: assistantResponse };
+
       setMessages((prev) => [...prev, assistantMessage]);
+      setApiMessages([...updatedApiMessages, assistantApiMessage]);
+    } catch (error) {
+      console.error('Ошибка при получении ответа от ассистента:', error);
+
+      // Добавляем сообщение об ошибке
+      const errorMessage: Message = {
+        id: generateId(),
+        type: 'assistant',
+        content: 'Извините, произошла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз.',
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
-  };
-
-  // Функция для генерации ответа ассистента (заглушка)
-  const getAssistantResponse = (userInput: string): string => {
-    const userInputLower = userInput.toLowerCase();
-
-    if (userInputLower.includes('привет') || userInputLower.includes('здравствуй')) {
-      return 'Привет! Чем я могу помочь тебе с подготовкой к экзаменам?';
-    } else if (userInputLower.includes('математик') || userInputLower.includes('алгебр') || userInputLower.includes('геометри')) {
-      return 'Математика - отличный предмет! Я могу помочь тебе с алгеброй, геометрией и математическим анализом. Какая тема тебя интересует?';
-    } else if (userInputLower.includes('русск') || userInputLower.includes('язык') || userInputLower.includes('литератур')) {
-      return 'Русский язык и литература - важные предметы. Я могу помочь с грамматикой, синтаксисом, анализом текстов и литературными произведениями.';
-    } else if (userInputLower.includes('физик')) {
-      return 'Физика - увлекательная наука! Какой раздел физики тебя интересует: механика, электричество, оптика или что-то другое?';
-    } else if (userInputLower.includes('тест') || userInputLower.includes('экзамен')) {
-      return 'Я могу помочь тебе подготовиться к тестам и экзаменам. Хочешь пройти пробный тест или разобрать конкретные темы?';
-    } else {
-      return 'Спасибо за вопрос! Я могу помочь тебе с подготовкой к экзаменам по различным предметам. Уточни, пожалуйста, какой предмет или тема тебя интересует?';
     }
   };
 

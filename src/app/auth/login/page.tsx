@@ -11,16 +11,20 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Здесь будет интеграция с Supabase для аутентификации
-    console.log('Вход с данными:', { email, password });
-    
-    // Имитация задержки для демонстрации состояния загрузки
-    setTimeout(() => {
+
+    try {
+      // Интеграция с Supabase для аутентификации
+      const { signIn } = await import('@/utils/auth');
+      await signIn({ email, password });
+
+      // После успешной аутентификации перенаправление на дашборд
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Ошибка входа:', error);
+      alert('Ошибка входа: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'));
+    } finally {
       setLoading(false);
-      // После успешной аутентификации перенаправление на главную страницу
-      // window.location.href = '/dashboard';
-    }, 1500);
+    }
   };
 
   return (
@@ -32,7 +36,7 @@ export default function LoginPage() {
             Войдите в свою учетную запись
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -50,7 +54,7 @@ export default function LoginPage() {
               placeholder="your@email.com"
             />
           </div>
-          
+
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Пароль
@@ -67,7 +71,7 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -80,14 +84,14 @@ export default function LoginPage() {
                 Запомнить меня
               </label>
             </div>
-            
+
             <div className="text-sm">
               <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                 Забыли пароль?
               </a>
             </div>
           </div>
-          
+
           <div>
             <button
               type="submit"
@@ -98,7 +102,7 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-        
+
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Нет учетной записи?{' '}
@@ -108,7 +112,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-      
+
       <div className="mt-8">
         <Link href="/" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
           ← Вернуться на главную

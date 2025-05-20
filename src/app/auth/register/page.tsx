@@ -14,24 +14,28 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     // Проверка совпадения паролей
     if (password !== confirmPassword) {
       setError('Пароли не совпадают');
       return;
     }
-    
+
     setLoading(true);
-    
-    // Здесь будет интеграция с Supabase для регистрации
-    console.log('Регистрация с данными:', { name, email, password });
-    
-    // Имитация задержки для демонстрации состояния загрузки
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      // Интеграция с Supabase для регистрации
+      const { signUp } = await import('@/utils/auth');
+      await signUp({ email, password, name });
+
       // После успешной регистрации перенаправление на страницу входа
-      // window.location.href = '/auth/login';
-    }, 1500);
+      window.location.href = '/auth/login?registered=true';
+    } catch (error) {
+      console.error('Ошибка регистрации:', error);
+      setError(error instanceof Error ? error.message : 'Произошла ошибка при регистрации');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,14 +47,14 @@ export default function RegisterPage() {
             Создайте новую учетную запись
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded-md">
               {error}
             </div>
           )}
-          
+
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Имя
@@ -67,7 +71,7 @@ export default function RegisterPage() {
               placeholder="Иван Иванов"
             />
           </div>
-          
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Email
@@ -84,7 +88,7 @@ export default function RegisterPage() {
               placeholder="your@email.com"
             />
           </div>
-          
+
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Пароль
@@ -101,7 +105,7 @@ export default function RegisterPage() {
               placeholder="••••••••"
             />
           </div>
-          
+
           <div>
             <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Подтверждение пароля
@@ -118,7 +122,7 @@ export default function RegisterPage() {
               placeholder="••••••••"
             />
           </div>
-          
+
           <div>
             <button
               type="submit"
@@ -129,7 +133,7 @@ export default function RegisterPage() {
             </button>
           </div>
         </form>
-        
+
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Уже есть учетная запись?{' '}
@@ -139,7 +143,7 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
-      
+
       <div className="mt-8">
         <Link href="/" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
           ← Вернуться на главную
