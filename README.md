@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Виртуальный ассистент для подготовки к экзаменам
 
-## Getting Started
+Веб-приложение для персонализированного обучения с использованием ИИ-технологий.
 
-First, run the development server:
+## Функциональные возможности
+
+- Адаптивное тестирование для оценки уровня знаний
+- Генерация индивидуальных учебных планов
+- Интеллектуальные подсказки и объяснения
+- Тренировочные экзаменационные тесты
+- Система прогресса и аналитики обучения
+- Интеграция с ИИ-ассистентом
+
+## Технологический стек
+
+- **Фронтенд**: Next.js, React, TypeScript, Tailwind CSS
+- **Бэкенд**: Supabase (PostgreSQL, Auth)
+- **Хостинг**: Vercel
+- **Аналитика**: Sentry, Umami
+
+## Начало работы
+
+### Предварительные требования
+
+- Node.js 18.x или выше
+- npm или pnpm
+
+### Установка
+
+1. Клонируйте репозиторий:
+
+```bash
+git clone https://github.com/your-username/study-assistant-app.git
+cd study-assistant-app
+```
+
+2. Установите зависимости:
+
+```bash
+npm install
+# или
+pnpm install
+```
+
+3. Создайте файл `.env.local` на основе `.env.example` и заполните необходимые переменные окружения:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Запустите сервер разработки:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
+# или
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000) в браузере, чтобы увидеть результат.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Тестирование
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Для запуска тестов выполните:
 
-## Learn More
+```bash
+npm test
+# или
+pnpm test
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Деплой
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Приложение настроено для деплоя на Vercel. Просто подключите ваш репозиторий к Vercel, и деплой будет происходить автоматически при каждом пуше в основную ветку.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Структура проекта
 
-## Deploy on Vercel
+- `/src/app` - Страницы приложения (Next.js App Router)
+- `/src/components` - Компоненты React
+- `/src/utils` - Утилиты и вспомогательные функции
+- `/src/hooks` - Пользовательские React-хуки
+- `/docs` - Документация проекта
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Лицензия
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

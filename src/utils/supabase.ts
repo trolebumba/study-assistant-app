@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Отсутствуют переменные окружения для Supabase. Убедитесь, что NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY заданы в .env.local');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -99,7 +103,7 @@ export async function getUserProfile(userId: string) {
     .select('*')
     .eq('id', userId)
     .single();
-  
+
   if (error) throw error;
   return data as User;
 }
@@ -109,7 +113,7 @@ export async function updateUserProfile(userId: string, updates: Partial<User>) 
     .from('profiles')
     .update(updates)
     .eq('id', userId);
-  
+
   if (error) throw error;
   return data;
 }
@@ -119,7 +123,7 @@ export async function getCourses() {
     .from('courses')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data as Course[];
 }
@@ -130,7 +134,7 @@ export async function getCourse(courseId: string) {
     .select('*')
     .eq('id', courseId)
     .single();
-  
+
   if (error) throw error;
   return data as Course;
 }
@@ -141,20 +145,20 @@ export async function getLessons(courseId: string) {
     .select('*')
     .eq('course_id', courseId)
     .order('order', { ascending: true });
-  
+
   if (error) throw error;
   return data as Lesson[];
 }
 
 export async function getTests(courseId?: string) {
   let query = supabase.from('tests').select('*');
-  
+
   if (courseId) {
     query = query.eq('course_id', courseId);
   }
-  
+
   const { data, error } = await query.order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data as Test[];
 }
@@ -164,7 +168,7 @@ export async function getQuestions(testId: string) {
     .from('questions')
     .select('*')
     .eq('test_id', testId);
-  
+
   if (error) throw error;
   return data as Question[];
 }
@@ -174,7 +178,7 @@ export async function getUserProgress(userId: string) {
     .from('user_progress')
     .select('*')
     .eq('user_id', userId);
-  
+
   if (error) throw error;
   return data as UserProgress[];
 }
@@ -185,7 +189,7 @@ export async function getStudyPlans(userId: string) {
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data as StudyPlan[];
 }
@@ -195,7 +199,7 @@ export async function getStudyPlanItems(studyPlanId: string) {
     .from('study_plan_items')
     .select('*')
     .eq('study_plan_id', studyPlanId);
-  
+
   if (error) throw error;
   return data as StudyPlanItem[];
 }

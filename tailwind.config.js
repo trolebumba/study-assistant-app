@@ -42,6 +42,17 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Green Beach тема
+        beach: {
+          sand: '#f0e6d2',
+          sandDark: '#e6d7b9',
+          water: '#a2d5f2',
+          waterDark: '#7abde0',
+          leaf: '#3cb371',
+          leafDark: '#2e8b57',
+          palm: '#228b22',
+          coral: '#ff7f50',
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -49,8 +60,12 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)'],
-        mono: ['var(--font-geist-mono)'],
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
+      },
+      backgroundImage: {
+        'beach-gradient': 'linear-gradient(to bottom, #a2d5f2, #3cb371)',
+        'sand-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZjBlNmQyIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiNlNmQ3YjkiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=')",
       },
     },
   },

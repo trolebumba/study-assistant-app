@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -54,7 +54,7 @@ export default function LearningStatistics() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   // Обработчик наведения на сектор в круговой диаграмме
-  const handlePieEnter = (_: any, index: number) => {
+  const handlePieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
 
@@ -66,7 +66,15 @@ export default function LearningStatistics() {
     innerRadius,
     outerRadius,
     percent,
-  }: any) => {
+  }: {
+    cx: number;
+    cy: number;
+    midAngle: number;
+    innerRadius: number;
+    outerRadius: number;
+    percent: number;
+    index: number;
+  }) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);

@@ -7,20 +7,8 @@ export const initSentry = () => {
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
       environment: process.env.NODE_ENV,
       tracesSampleRate: 1.0, // Capture 100% of transactions in development, adjust for production
-      integrations: [
-        new Sentry.BrowserTracing({
-          // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-          tracePropagationTargets: ['localhost', /^https:\/\/study-assistant\.vercel\.app/],
-        }),
-        new Sentry.Replay({
-          // Additional Replay configuration
-          maskAllText: true,
-          blockAllMedia: true,
-        }),
-      ],
-      // Performance monitoring
-      replaysSessionSampleRate: 0.1, // Sample rate for all sessions (10%)
-      replaysOnErrorSampleRate: 1.0, // Sample rate for sessions with errors (100%)
+      // Упрощенная конфигурация без BrowserTracing и Replay
+      integrations: [],
     });
   } else {
     console.warn('Sentry DSN not found. Error tracking disabled.');
@@ -35,7 +23,7 @@ export const captureException = (error: Error, context?: Record<string, any>) =>
       console.error('Additional context:', context);
     }
   }
-  
+
   Sentry.captureException(error, {
     contexts: context ? { additional: context } : undefined,
   });
@@ -50,7 +38,7 @@ export const captureEvent = (
   if (process.env.NODE_ENV !== 'production') {
     console.log(`Event captured by Sentry: ${name}`, data);
   }
-  
+
   Sentry.captureEvent({
     message: name,
     level,

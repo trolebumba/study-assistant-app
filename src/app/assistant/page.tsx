@@ -49,53 +49,57 @@ export default function AssistantPage() {
 
     if (!inputValue.trim()) return;
 
-    // Добавляем сообщение пользователя
-    const userMessage: Message = {
-      id: generateId(),
-      type: 'user',
-      content: inputValue,
-      timestamp: new Date(),
-    };
-
-    // Добавляем сообщение пользователя в историю для API
-    const userApiMessage = { role: 'user' as const, content: inputValue };
-    const updatedApiMessages = [...apiMessages, userApiMessage];
-
-    setMessages((prev) => [...prev, userMessage]);
-    setApiMessages(updatedApiMessages);
-    setInputValue('');
-    setIsLoading(true);
-
     try {
-      // Получаем ответ от OpenAI (в реальном приложении)
-      const { callOpenAI } = await import('@/utils/openai');
-      const assistantResponse = await callOpenAI(updatedApiMessages);
-
-      // Добавляем ответ ассистента в историю сообщений
-      const assistantMessage: Message = {
+      // Добавляем сообщение пользователя
+      const userMessage: Message = {
         id: generateId(),
-        type: 'assistant',
-        content: assistantResponse,
+        type: 'user',
+        content: inputValue,
         timestamp: new Date(),
       };
 
-      // Добавляем ответ ассистента в историю для API
-      const assistantApiMessage = { role: 'assistant' as const, content: assistantResponse };
+      // Добавляем сообщение пользователя в историю для API
+      const userApiMessage = { role: 'user' as const, content: inputValue };
+      const updatedApiMessages = [...apiMessages, userApiMessage];
 
-      setMessages((prev) => [...prev, assistantMessage]);
-      setApiMessages([...updatedApiMessages, assistantApiMessage]);
+      setMessages((prev) => [...prev, userMessage]);
+      setApiMessages(updatedApiMessages);
+      setInputValue('');
+      setIsLoading(true);
+
+      try {
+        // Получаем ответ от OpenAI (в реальном приложении)
+        const { callOpenAI } = await import('@/utils/openai');
+        const assistantResponse = await callOpenAI(updatedApiMessages);
+
+        // Добавляем ответ ассистента в историю сообщений
+        const assistantMessage: Message = {
+          id: generateId(),
+          type: 'assistant',
+          content: assistantResponse,
+          timestamp: new Date(),
+        };
+
+        // Добавляем ответ ассистента в историю для API
+        const assistantApiMessage = { role: 'assistant' as const, content: assistantResponse };
+
+        setMessages((prev) => [...prev, assistantMessage]);
+        setApiMessages([...updatedApiMessages, assistantApiMessage]);
+      } catch (error) {
+        console.error('Ошибка при получении ответа от ассистента:', error);
+
+        // Добавляем сообщение об ошибке
+        const errorMessage: Message = {
+          id: generateId(),
+          type: 'assistant',
+          content: 'Извините, произошла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз.',
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, errorMessage]);
+      }
     } catch (error) {
-      console.error('Ошибка при получении ответа от ассистента:', error);
-
-      // Добавляем сообщение об ошибке
-      const errorMessage: Message = {
-        id: generateId(),
-        type: 'assistant',
-        content: 'Извините, произошла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз.',
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, errorMessage]);
+      console.error('Неожиданная ошибка при отправке сообщения:', error);
     } finally {
       setIsLoading(false);
     }
