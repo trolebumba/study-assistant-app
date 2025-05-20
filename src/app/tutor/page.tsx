@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import MainNavigation from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import VirtualTutor from '@/components/VirtualTutor';
 
@@ -9,7 +9,7 @@ export default function TutorPage() {
   // Состояние для выбранной темы
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState<string | null>(null);
-  
+
   // Доступные темы и подтемы
   const topics = [
     {
@@ -53,12 +53,12 @@ export default function TutorPage() {
       ],
     },
   ];
-  
+
   // Получаем подтемы для выбранной темы
   const subtopics = selectedTopic
     ? topics.find(topic => topic.id === selectedTopic)?.subtopics || []
     : [];
-  
+
   // Функция для начала сессии с тьютором
   const startTutorSession = () => {
     // Проверяем, что тема выбрана
@@ -67,11 +67,11 @@ export default function TutorPage() {
       return;
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <MainNavigation />
-      
+      <Navigation />
+
       {/* Основное содержимое */}
       <div className="py-10">
         <header>
@@ -82,13 +82,13 @@ export default function TutorPage() {
             </p>
           </div>
         </header>
-        
+
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
             <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Выберите тему для обсуждения</h2>
-                
+
                 {/* Выбор темы */}
                 <div className="mb-6">
                   <label htmlFor="topic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -109,7 +109,7 @@ export default function TutorPage() {
                     ))}
                   </select>
                 </div>
-                
+
                 {/* Выбор подтемы */}
                 {selectedTopic && (
                   <div className="mb-6">
@@ -129,7 +129,7 @@ export default function TutorPage() {
                     </select>
                   </div>
                 )}
-                
+
                 {/* Кнопка для начала сессии */}
                 <div className="flex justify-end">
                   <button
@@ -142,20 +142,20 @@ export default function TutorPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Виртуальный тьютор */}
             {selectedTopic && (
               <div className="mt-6">
-                <VirtualTutor 
-                  topic={selectedTopic} 
-                  subtopic={selectedSubtopic || undefined} 
+                <VirtualTutor
+                  topic={selectedTopic}
+                  subtopic={selectedSubtopic || undefined}
                 />
               </div>
             )}
           </div>
         </main>
       </div>
-      
+
       <Footer />
     </div>
   );

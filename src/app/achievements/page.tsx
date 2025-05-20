@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import MainNavigation from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import Achievements from '@/components/Achievements';
 import LevelProgress from '@/components/LevelProgress';
@@ -85,7 +85,7 @@ export default function AchievementsPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <MainNavigation />
+      <Navigation />
 
       <div className="py-10">
         <header>

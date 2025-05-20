@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
-import MainNavigation from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import PredictiveAnalytics from '@/components/PredictiveAnalytics';
 
 export default function AnalyticsPage() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <MainNavigation />
-      
+      <Navigation />
+
       {/* Основное содержимое */}
       <div className="py-10">
         <header>
@@ -20,19 +20,19 @@ export default function AnalyticsPage() {
             </p>
           </div>
         </header>
-        
+
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
             <div className="grid grid-cols-1 gap-6">
               {/* Предиктивная аналитика */}
               <PredictiveAnalytics />
-              
+
               {/* Дополнительные блоки аналитики можно добавить здесь */}
             </div>
           </div>
         </main>
       </div>
-      
+
       <Footer />
     </div>
   );
